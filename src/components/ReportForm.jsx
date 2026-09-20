@@ -14,6 +14,12 @@ const ReportForm = () => {
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState(null); // { msg, type: 'success'|'error' }
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
   
   // Array of days for the dropdown
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -71,7 +77,7 @@ const ReportForm = () => {
     e.preventDefault();
     
     if (!formData.date || !formData.amount || (!formData.imageFile && formData.type === 'income')) {
-      alert('Por favor completa todos los campos requeridos y sube el comprobante.');
+      showToast('Por favor completa todos los campos y sube el comprobante.', 'error');
       return;
     }
 
@@ -88,16 +94,36 @@ const ReportForm = () => {
         imageFile: null
       });
       setPreviewUrl(null);
-      alert('Reporte enviado con éxito');
+      showToast('¡Reporte enviado con éxito! ✓');
     } catch (error) {
       console.error(error);
-      alert('Hubo un error al enviar el reporte.');
+      showToast('Hubo un error al enviar el reporte.', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
+    <>
+    {/* Toast notification */}
+    {toast && (
+      <div style={{
+        position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+        zIndex: 999, minWidth: '260px', maxWidth: '90vw',
+        background: toast.type === 'success' ? '#166534' : '#7f1d1d',
+        border: `1px solid ${toast.type === 'success' ? '#22c55e' : '#ef4444'}`,
+        color: '#fff', borderRadius: 'var(--radius-lg)',
+        padding: '0.875rem 1.25rem',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', gap: '0.625rem',
+        fontSize: '0.9rem', fontWeight: '500',
+        animation: 'slideUp 0.25s ease'
+      }}>
+        <span style={{ fontSize: '1.1rem' }}>{toast.type === 'success' ? '✅' : '❌'}</span>
+        {toast.msg}
+      </div>
+    )}
+    <style>{`@keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(16px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }`}</style>
     <div className="card glass-panel">
       <div style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-main)', letterSpacing: '-0.01em', margin: 0 }}>Nuevo Reporte</h2>
@@ -238,6 +264,7 @@ const ReportForm = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 
