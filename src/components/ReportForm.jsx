@@ -119,7 +119,6 @@ const ReportForm = () => {
         fontSize: '0.9rem', fontWeight: '500',
         animation: 'slideUp 0.25s ease'
       }}>
-        <span style={{ fontSize: '1.1rem' }}>{toast.type === 'success' ? '✅' : '❌'}</span>
         {toast.msg}
       </div>
     )}
