@@ -166,7 +166,6 @@ const ReportForm = () => {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              capture="environment" /* Abre la cámara en móviles */
             />
           </div>
           {previewUrl && (
