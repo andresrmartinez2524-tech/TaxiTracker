@@ -23,17 +23,49 @@ const ReportForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, imageFile: file }));
+  // Compresses image to max 1280px and 80% JPEG quality to avoid OOM on mobile
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const MAX_PX = 1280;
+      const QUALITY = 0.8;
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > MAX_PX || height > MAX_PX) {
+            if (width > height) {
+              height = Math.round((height * MAX_PX) / width);
+              width = MAX_PX;
+            } else {
+              width = Math.round((width * MAX_PX) / height);
+              height = MAX_PX;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => resolve(new File([blob], file.name, { type: 'image/jpeg' })),
+            'image/jpeg',
+            QUALITY
+          );
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const compressed = await compressImage(file);
+    setFormData(prev => ({ ...prev, imageFile: compressed }));
+    setPreviewUrl(URL.createObjectURL(compressed));
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
