@@ -153,21 +153,49 @@ const ReportForm = () => {
 
         <div className="form-group">
           <label className="form-label">Foto del Comprobante / Recibo</label>
-          <div className="file-upload-wrapper">
-            <button type="button" className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
-              {previewUrl ? 'Cambiar Foto' : 'Subir o Tomar Foto'}
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+          <div style={{ display: 'flex', gap: '0.625rem' }}>
+            {/* Button 1: Camera */}
+            <label style={{ flex: 1, position: 'relative', cursor: 'pointer' }}>
+              <div className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', pointerEvents: 'none' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                Cámara
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleImageChange}
+                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+              />
+            </label>
+
+            {/* Button 2: Gallery */}
+            <label style={{ flex: 1, position: 'relative', cursor: 'pointer' }}>
+              <div className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', pointerEvents: 'none' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                Galería
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+              />
+            </label>
           </div>
+
+          {previewUrl && (
+            <div style={{ marginTop: '0.75rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              ✓ Foto seleccionada
+            </div>
+          )}
           {previewUrl && (
             <img src={previewUrl} alt="Preview" className="image-preview" />
           )}
